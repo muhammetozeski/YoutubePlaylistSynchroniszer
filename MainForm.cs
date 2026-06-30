@@ -19,6 +19,10 @@ internal sealed class MainForm : Form
     readonly List<TabPage> _syncTabs = [];
     bool _syncRunning;
 
+    readonly NotifyIcon _tray;
+    bool _exiting;
+    bool _trayBalloonShown;
+
     public MainForm()
     {
         Text = AppConstants.AppTitle;
@@ -38,10 +42,24 @@ internal sealed class MainForm : Form
 
         Controls.Add(_tabs);
 
+        _tray = new NotifyIcon { Icon = AppIcon.Shared, Text = AppConstants.AppTitle, Visible = true };
+        var trayMenu = new ContextMenuStrip();
+        trayMenu.Items.Add(Strings.TrayOpen, null, (_, _) => ShowFromTray());
+        trayMenu.Items.Add(Strings.TrayExit, null, (_, _) => { _exiting = true; Close(); });
+        _tray.ContextMenuStrip = trayMenu;
+        _tray.DoubleClick += (_, _) => ShowFromTray();
+
         _account.AuthChanged += _playlists.NotifyAuthChanged;
         _playlists.SyncRequested += StartSync;
-        FormClosing += PersistWindowSize;
+        FormClosing += OnFormClosing;
         Load += (_, _) => Theme.ApplyToWindow(this);
+    }
+
+    void ShowFromTray()
+    {
+        Show();
+        WindowState = FormWindowState.Normal;
+        Activate();
     }
 
     /// <summary>Re-themes the whole window (called by Settings when the dark-theme toggle changes).</summary>
@@ -114,11 +132,35 @@ internal sealed class MainForm : Form
         }
     }
 
-    void PersistWindowSize(object? sender, FormClosingEventArgs e)
+    void OnFormClosing(object? sender, FormClosingEventArgs e)
     {
-        if (WindowState != FormWindowState.Normal) return;
-        Settings.WindowWidth.Value = Width;
-        Settings.WindowHeight.Value = Height;
-        SettingsManager.SaveSettings();
+        if (WindowState == FormWindowState.Normal)
+        {
+            Settings.WindowWidth.Value = Width;
+            Settings.WindowHeight.Value = Height;
+            SettingsManager.SaveSettings();
+        }
+
+        // Closing via the X keeps the app running in the tray; a real exit comes from the tray menu.
+        if (!_exiting && e.CloseReason == CloseReason.UserClosing)
+        {
+            e.Cancel = true;
+            Hide();
+            if (!_trayBalloonShown)
+            {
+                _trayBalloonShown = true;
+                try
+                {
+                    _tray.BalloonTipTitle = AppConstants.AppTitle;
+                    _tray.BalloonTipText = Strings.TrayRunningBackground;
+                    _tray.ShowBalloonTip(3000);
+                }
+                catch (Exception ex) { Log("Tray balloon failed: " + ex.Message, LogLevel.Warning); }
+            }
+            return;
+        }
+
+        _tray.Visible = false;
+        _tray.Dispose();
     }
 }

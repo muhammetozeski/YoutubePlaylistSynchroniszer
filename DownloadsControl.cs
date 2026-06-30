@@ -38,6 +38,18 @@ internal sealed class DownloadsControl : UserControl, ISyncObserver
         _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "status", HeaderText = Strings.DownloadsColStatus, FillWeight = 28 });
         _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "progress", HeaderText = Strings.DownloadsColProgress, FillWeight = 12 });
 
+        var menu = new ContextMenuStrip();
+        menu.Items.Add(Strings.DownloadsCtxOpenVideo, null, (_, _) => OpenVideo(_grid.CurrentRow));
+        menu.Items.Add(Strings.CtxCopyLink, null, (_, _) => CopyVideoLink(_grid.CurrentRow));
+        _grid.ContextMenuStrip = menu;
+        _grid.CellMouseDown += (_, e) =>
+        {
+            if (e.Button != MouseButtons.Right || e.RowIndex < 0) return;
+            _grid.ClearSelection();
+            _grid.Rows[e.RowIndex].Selected = true;
+            _grid.CurrentCell = _grid.Rows[e.RowIndex].Cells[0];
+        };
+
         var toolbar = Ui.Toolbar();
         _cancelButton = Ui.Button(Strings.DownloadsCancel, (_, _) => CancelRequested?.Invoke());
         _cancelButton.Enabled = false;
@@ -82,11 +94,30 @@ internal sealed class DownloadsControl : UserControl, ISyncObserver
         _overall.Maximum = Math.Max(1, _toDownload);
     });
 
+    /// <summary>Lists the whole queue up front (one row per missing video, "queued"), before downloads start.</summary>
+    public void OnQueued(IReadOnlyList<PlaylistVideo> queued) => Post(() =>
+    {
+        foreach (var video in queued)
+        {
+            if (_rowByVideo.ContainsKey(video.Id)) continue;
+            int row = _grid.Rows.Add(video.Title, Strings.DownloadsStatusQueued, "");
+            _grid.Rows[row].Tag = video.Id;
+            _rowByVideo[video.Id] = row;
+        }
+    });
+
     public void OnItemStarted(string videoId, string title, int index, int total) => Post(() =>
     {
-        if (_rowByVideo.ContainsKey(videoId)) return;
-        int row = _grid.Rows.Add(title, Strings.DownloadsStatusDownloading, "0%");
-        _rowByVideo[videoId] = row;
+        if (!_rowByVideo.TryGetValue(videoId, out int row))
+        {
+            row = _grid.Rows.Add(title, Strings.DownloadsStatusDownloading, "0%");
+            _grid.Rows[row].Tag = videoId;
+            _rowByVideo[videoId] = row;
+        }
+        else
+        {
+            _grid.Rows[row].Cells["status"].Value = Strings.DownloadsStatusDownloading;
+        }
         _grid.FirstDisplayedScrollingRowIndex = row;
     });
 
@@ -111,6 +142,18 @@ internal sealed class DownloadsControl : UserControl, ISyncObserver
         _completed++;
         _overall.Value = Math.Min(_completed, _overall.Maximum);
     });
+
+    void OpenVideo(DataGridViewRow? row)
+    {
+        if (row?.Tag is string videoId) OpenUrlInBrowser(AppConstants.ShortVideoUrlBase + videoId);
+    }
+
+    void CopyVideoLink(DataGridViewRow? row)
+    {
+        if (row?.Tag is not string videoId) return;
+        try { Clipboard.SetText(AppConstants.ShortVideoUrlBase + videoId); }
+        catch (Exception ex) { Log("Copy video link failed: " + ex.Message, LogLevel.Warning); }
+    }
 
     void Post(Action action)
     {

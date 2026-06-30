@@ -15,6 +15,7 @@
   <s name="TrayExit">Exit</s>
   <s name="TraySyncing">Syncing in the background… double-click to open.</s>
   <s name="TrayIdle">YouTube Playlist Synchronizer</s>
+  <s name="TrayRunningBackground">Running in the background. Double-click the tray icon to open.</s>
 
   <!-- common buttons -->
   <s name="BtnOk">OK</s>
@@ -96,7 +97,9 @@
   <s name="DownloadsCancel">Cancel</s>
   <s name="DownloadsStatusScanning">Scanning target folder…</s>
   <s name="DownloadsStatusEnumerating">Reading playlist…</s>
+  <s name="DownloadsStatusQueued">Queued</s>
   <s name="DownloadsStatusDownloading">Downloading…</s>
+  <s name="DownloadsCtxOpenVideo">Open video in browser</s>
   <s name="DownloadsStatusConverting">Converting…</s>
   <s name="DownloadsStatusDone">✅ Done</s>
   <s name="DownloadsStatusSkippedLive">⏭ Skipped (live stream)</s>

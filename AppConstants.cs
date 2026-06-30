@@ -9,7 +9,7 @@ internal static class AppConstants
 {
     public const string AppTitle = "YouTube Playlist Synchronizer";
     public const string AppFolderName = "YoutubePlaylistSynchroniszer";
-    public const string Version = "0.2.3";
+    public const string Version = "0.3.0";
 
     /// <summary>Full path to the running executable. Not null for file-based exes.</summary>
     public static readonly string ThisExePath = Environment.ProcessPath ?? Application.ExecutablePath;
@@ -42,4 +42,7 @@ internal static class AppConstants
 
     // ---- File-name convention shared with the reference ps1: "Title (VIDEOID).ext" ----
     public const string DownloadOutputTemplate = "%(title)s (%(id)s).%(ext)s";
+
+    /// <summary>Short video link base; full link is <c>https://youtu.be/&lt;id&gt;</c>.</summary>
+    public const string ShortVideoUrlBase = "https://youtu.be/";
 }

@@ -24,6 +24,7 @@ internal static class Strings
     public static string TrayExit = "Çıkış";
     public static string TraySyncing = "Arka planda senkronize ediliyor… açmak için çift tıklayın.";
     public static string TrayIdle = "YouTube Playlist Senkronizatörü";
+    public static string TrayRunningBackground = "Arka planda çalışıyor. Açmak için tepsi simgesine çift tıklayın.";
 
     // ---- common buttons ----
     public static string BtnOk = "Tamam";
@@ -105,7 +106,9 @@ internal static class Strings
     public static string DownloadsCancel = "İptal";
     public static string DownloadsStatusScanning = "Hedef klasör taranıyor…";
     public static string DownloadsStatusEnumerating = "Çalma listesi okunuyor…";
+    public static string DownloadsStatusQueued = "Sırada";
     public static string DownloadsStatusDownloading = "İndiriliyor…";
+    public static string DownloadsCtxOpenVideo = "Videoyu tarayıcıda aç";
     public static string DownloadsStatusConverting = "Dönüştürülüyor…";
     public static string DownloadsStatusDone = "✅ Tamamlandı";
     public static string DownloadsStatusSkippedLive = "⏭ Atlandı (canlı yayın)";

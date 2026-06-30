@@ -14,6 +14,11 @@ internal sealed class CompositeSyncObserver(params ISyncObserver[] observers) : 
         foreach (var observer in observers) observer.OnPlaylistScanned(playlistTotal, alreadyPresent, toDownload);
     }
 
+    public void OnQueued(IReadOnlyList<PlaylistVideo> queued)
+    {
+        foreach (var observer in observers) observer.OnQueued(queued);
+    }
+
     public void OnItemStarted(string videoId, string title, int index, int total)
     {
         foreach (var observer in observers) observer.OnItemStarted(videoId, title, index, total);

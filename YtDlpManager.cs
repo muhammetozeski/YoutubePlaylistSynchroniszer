@@ -89,7 +89,7 @@ internal static partial class YtDlpManager
             arguments.AddRange(["--match-filter", "live_status != is_live & live_status != is_upcoming & live_status != post_live"]);
         arguments.AddRange(options.BuildFormatArguments());
         arguments.AddRange(["-o", Path.Combine(workFolder, AppConstants.DownloadOutputTemplate)]);
-        arguments.Add("https://www.youtube.com/watch?v=" + videoId);
+        arguments.Add(AppConstants.ShortVideoUrlBase + videoId);
         return arguments;
     }
 
