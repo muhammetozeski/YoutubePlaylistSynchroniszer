@@ -101,20 +101,26 @@ internal static class GoogleOAuthService
 
         var query = ParseQuery(new Uri("http://127.0.0.1" + target).Query);
 
+        // Validate first, so the page the browser shows reflects the real outcome (not a false success).
+        query.TryGetValue("error", out var error);
+        bool stateOk = query.TryGetValue("state", out var state) && state == expectedState;
+        query.TryGetValue("code", out var code);
+        bool success = error is null && stateOk && !string.IsNullOrWhiteSpace(code);
+
+        string message = success
+            ? "Yetkilendirme tamamlandı. Bu sekmeyi kapatabilirsiniz."
+            : "Yetkilendirme başarısız. Uygulamaya dönebilirsiniz.";
         string responseBody = "<html><head><meta charset=\"utf-8\"></head><body style=\"font-family:Segoe UI;padding:2rem\">" +
-            "<h3>" + AppConstants.AppTitle + "</h3><p>Yetkilendirme tamamlandı. Bu sekmeyi kapatabilirsiniz.</p></body></html>";
+            "<h3>" + AppConstants.AppTitle + "</h3><p>" + message + "</p></body></html>";
         byte[] responseBytes = Encoding.UTF8.GetBytes(
             "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n" +
             $"Content-Length: {Encoding.UTF8.GetByteCount(responseBody)}\r\nConnection: close\r\n\r\n{responseBody}");
         await stream.WriteAsync(responseBytes, cancellationToken);
 
-        if (query.TryGetValue("error", out var error))
-            throw new InvalidOperationException("Authorization denied: " + error);
-        if (!query.TryGetValue("state", out var state) || state != expectedState)
-            throw new InvalidOperationException("OAuth state mismatch (possible interception).");
-        if (!query.TryGetValue("code", out var code) || string.IsNullOrWhiteSpace(code))
-            throw new InvalidOperationException("No authorization code in the redirect.");
-        return code;
+        if (error is not null) throw new InvalidOperationException("Authorization denied: " + error);
+        if (!stateOk) throw new InvalidOperationException("OAuth state mismatch (possible interception).");
+        if (string.IsNullOrWhiteSpace(code)) throw new InvalidOperationException("No authorization code in the redirect.");
+        return code!;
     }
 
     static Dictionary<string, string> ParseQuery(string query)
