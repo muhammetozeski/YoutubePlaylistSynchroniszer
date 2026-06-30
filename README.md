@@ -10,6 +10,7 @@
 [![Single file](https://img.shields.io/badge/build-single--exe-CC0000.svg)](#download)
 
 ![Screenshot](docs/screenshot.png)
+![Dark theme](docs/screenshot-dark.png)
 
 </div>
 

@@ -56,6 +56,24 @@
   <s name="PlaylistsConfigureColumn">Configure…</s>
   <s name="PlaylistsNeedTargetFormat">Pick a target folder via 'Configure…' for these first:\n{0}</s>
   <s name="PlaylistsNothingSelected">No playlist selected to sync.</s>
+  <s name="PlaylistsColCreated">Created</s>
+  <s name="PlaylistsSelectAll">Select all</s>
+  <s name="PlaylistsClearAll">Clear selection</s>
+  <s name="CtxCheckSelected">Check selected</s>
+  <s name="CtxUncheckSelected">Uncheck selected</s>
+  <s name="CtxViewContents">View contents…</s>
+  <s name="ConfirmSelectAllFormat">Check all {0} playlists?</s>
+  <s name="ConfirmClearAll">Clear all checkmarks?</s>
+  <s name="DontAskAgain">Don't ask again</s>
+
+  <!-- playlist contents dialog -->
+  <s name="ContentsTitleFormat">{0} — contents</s>
+  <s name="ContentsLoadingFormat">Loading contents…</s>
+  <s name="ContentsColIndex">#</s>
+  <s name="ContentsColTitle">Title</s>
+  <s name="ContentsColAdded">Added on</s>
+  <s name="ContentsColVideoId">Video ID</s>
+  <s name="ContentsCountFormat">{0} videos</s>
 
   <!-- media / quality -->
   <s name="MediaKindMusic">Music</s>
@@ -91,6 +109,8 @@
   <s name="SettingsSkipLiveLabel">Skip live streams</s>
   <s name="SettingsAutoUpdateYtDlpLabel">Update yt-dlp before a sync</s>
   <s name="SettingsConcurrencyLabel">Concurrent downloads:</s>
+  <s name="SettingsDarkThemeLabel">Dark theme</s>
+  <s name="SettingsBulkConfirmLabel">Confirm bulk selection actions</s>
 
   <!-- logs -->
   <s name="LogsCopy">Copy logs</s>

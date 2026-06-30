@@ -36,6 +36,22 @@ internal static class SyncProfileStore
         Save();
     }
 
+    /// <summary>Adds/replaces several profiles and persists once (for bulk select/clear).</summary>
+    public static void UpsertMany(IReadOnlyCollection<SyncProfile> profiles)
+    {
+        if (profiles.Count == 0) return;
+        EnsureLoaded();
+        lock (Gate)
+        {
+            foreach (var profile in profiles)
+            {
+                _profiles.RemoveAll(p => p.PlaylistId == profile.PlaylistId);
+                _profiles.Add(profile);
+            }
+        }
+        Save();
+    }
+
     public static void Remove(string playlistId)
     {
         EnsureLoaded();

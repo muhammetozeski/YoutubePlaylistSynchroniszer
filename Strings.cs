@@ -65,6 +65,24 @@ internal static class Strings
     public static string PlaylistsConfigureColumn = "Ayarla…";
     public static string PlaylistsNeedTargetFormat = "Şu listeler için önce 'Ayarla…' ile hedef klasör seçin:\n{0}";
     public static string PlaylistsNothingSelected = "Senkronize edilecek çalma listesi seçilmedi.";
+    public static string PlaylistsColCreated = "Oluşturulma";
+    public static string PlaylistsSelectAll = "Tümünü seç";
+    public static string PlaylistsClearAll = "Seçimleri kaldır";
+    public static string CtxCheckSelected = "Seçilenleri işaretle";
+    public static string CtxUncheckSelected = "Seçilenlerin işaretini kaldır";
+    public static string CtxViewContents = "İçeriği gör…";
+    public static string ConfirmSelectAllFormat = "{0} çalma listesinin tümü işaretlensin mi?";
+    public static string ConfirmClearAll = "Tüm işaretler kaldırılsın mı?";
+    public static string DontAskAgain = "Bir daha sorma";
+
+    // ---- playlist contents dialog ----
+    public static string ContentsTitleFormat = "{0} — içerik";
+    public static string ContentsLoadingFormat = "İçerik yükleniyor…";
+    public static string ContentsColIndex = "#";
+    public static string ContentsColTitle = "Başlık";
+    public static string ContentsColAdded = "Eklenme tarihi";
+    public static string ContentsColVideoId = "Video ID";
+    public static string ContentsCountFormat = "{0} video";
 
     // ---- media / quality ----
     public static string MediaKindMusic = "Müzik";
@@ -100,6 +118,8 @@ internal static class Strings
     public static string SettingsSkipLiveLabel = "Canlı yayınları atla";
     public static string SettingsAutoUpdateYtDlpLabel = "Senkronizasyondan önce yt-dlp'yi güncelle";
     public static string SettingsConcurrencyLabel = "Eşzamanlı indirme:";
+    public static string SettingsDarkThemeLabel = "Karanlık tema";
+    public static string SettingsBulkConfirmLabel = "Toplu seçim işlemlerinde onay sor";
 
     // ---- logs tab ----
     public static string LogsCopy = "Günlükleri kopyala";

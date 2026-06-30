@@ -3,8 +3,11 @@ namespace YoutubePlaylistSynchroniszer;
 /// <summary>The Settings tab: app-wide preferences, each persisted immediately on change.</summary>
 internal sealed class SettingsControl : UserControl
 {
-    public SettingsControl()
+    readonly Action _onThemeChanged;
+
+    public SettingsControl(Action onThemeChanged)
     {
+        _onThemeChanged = onThemeChanged;
         Dock = DockStyle.Fill;
         AutoScroll = true;
 
@@ -19,6 +22,13 @@ internal sealed class SettingsControl : UserControl
 
         layout.Controls.Add(Ui.Header(Strings.SettingsHeader));
         layout.Controls.Add(BuildLanguageRow());
+        layout.Controls.Add(Ui.Check(Strings.SettingsDarkThemeLabel, Settings.DarkTheme, (s, _) =>
+        {
+            Persist(() => Settings.DarkTheme.Value = ((CheckBox)s!).Checked);
+            _onThemeChanged();
+        }));
+        layout.Controls.Add(Ui.Check(Strings.SettingsBulkConfirmLabel, Settings.ConfirmBulkSelect, (s, _) =>
+            Persist(() => Settings.ConfirmBulkSelect.Value = ((CheckBox)s!).Checked)));
         layout.Controls.Add(Ui.Check(Strings.SettingsLoggingLabel, Settings.EnableLogging, (s, _) =>
             LoggerHost.SetEnabled(((CheckBox)s!).Checked)));
         layout.Controls.Add(Ui.Check(Strings.SettingsCleanCacheLabel, Settings.CleanCacheAfterSync, (s, _) =>

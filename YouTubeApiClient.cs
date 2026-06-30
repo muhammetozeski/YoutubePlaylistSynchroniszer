@@ -24,7 +24,7 @@ internal static class YouTubeApiClient
                 string url = $"/playlists?part=snippet,contentDetails&mine=true&maxResults={PageSize}" + PageParam(pageToken);
                 var page = await GetAsync<PlaylistListResponse>(url, token);
                 foreach (var item in page.Items)
-                    playlists.Add(new YouTubePlaylist(item.Id, item.Snippet?.Title ?? item.Id, item.ContentDetails?.ItemCount ?? 0));
+                    playlists.Add(new YouTubePlaylist(item.Id, item.Snippet?.Title ?? item.Id, item.ContentDetails?.ItemCount ?? 0, item.Snippet?.PublishedAt));
                 pageToken = page.NextPageToken;
             }
             while (!string.IsNullOrEmpty(pageToken));
@@ -46,7 +46,7 @@ internal static class YouTubeApiClient
                 {
                     string? videoId = item.ContentDetails?.VideoId;
                     if (!string.IsNullOrWhiteSpace(videoId))
-                        videos.Add(new PlaylistVideo(videoId, item.Snippet?.Title ?? videoId));
+                        videos.Add(new PlaylistVideo(videoId, item.Snippet?.Title ?? videoId, item.Snippet?.PublishedAt));
                 }
                 pageToken = page.NextPageToken;
             }

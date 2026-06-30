@@ -16,6 +16,13 @@ internal static class Settings
     /// <summary>Cached channel title of the signed-in account, shown as the "connected as …" label.</summary>
     public static readonly Setting<string> AccountLabel = new("");
 
+    /// <summary>Dark UI theme on/off.</summary>
+    public static readonly Setting<bool> DarkTheme = new(false);
+
+    /// <summary>Ask for confirmation on bulk select-all / clear-all. Turned off by the "don't ask again"
+    /// option and re-enabled from Settings.</summary>
+    public static readonly Setting<bool> ConfirmBulkSelect = new(true);
+
     /// <summary>Delete the Cache folder contents after a sync run finishes.</summary>
     public static readonly Setting<bool> CleanCacheAfterSync = new(true);
 

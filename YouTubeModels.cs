@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 namespace YoutubePlaylistSynchroniszer;
 
 /// <summary>A playlist owned by the signed-in user, as shown in the UI.</summary>
-internal sealed record YouTubePlaylist(string Id, string Title, int ItemCount);
+internal sealed record YouTubePlaylist(string Id, string Title, int ItemCount, DateTime? CreatedAt = null);
 
-/// <summary>One video entry in a playlist (id + title), as used by the sync engine.</summary>
-internal sealed record PlaylistVideo(string Id, string Title);
+/// <summary>One video entry in a playlist. <see cref="AddedAt"/> is when it was added to the playlist.</summary>
+internal sealed record PlaylistVideo(string Id, string Title, DateTime? AddedAt = null);
 
 // ---- Raw YouTube Data API v3 DTOs (deserialization only) ----
 
@@ -45,10 +45,11 @@ internal sealed class ItemContentDetails
     [JsonPropertyName("videoId")] public string VideoId { get; set; } = "";
 }
 
-/// <summary>Shared snippet shape — only the title is needed.</summary>
+/// <summary>Shared snippet shape — title plus the publish/added timestamp.</summary>
 internal sealed class TitleSnippet
 {
     [JsonPropertyName("title")] public string Title { get; set; } = "";
+    [JsonPropertyName("publishedAt")] public DateTime? PublishedAt { get; set; }
 }
 
 internal sealed class ChannelListResponse

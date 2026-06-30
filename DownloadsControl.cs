@@ -1,12 +1,16 @@
 namespace YoutubePlaylistSynchroniszer;
 
 /// <summary>
-/// The Downloads tab: drives a sync run and shows live per-video progress. It implements
-/// <see cref="ISyncObserver"/> and marshals every engine callback onto the UI thread. The run is wrapped
-/// by <see cref="Resilience.GuardAsync"/>, so a failure offers the user a retry.
+/// A live progress view for a sync run: per-video rows plus an overall bar and a phase line. It is a
+/// passive <see cref="ISyncObserver"/> — the run is driven by <see cref="MainForm"/>, which feeds one of
+/// these per playlist (its own tab) and one aggregate (the Downloads tab). Marshals all engine callbacks
+/// onto the UI thread. The Cancel button raises <see cref="CancelRequested"/>.
 /// </summary>
 internal sealed class DownloadsControl : UserControl, ISyncObserver
 {
+    /// <summary>Raised when the user clicks Cancel (MainForm cancels the run's token).</summary>
+    public event Action? CancelRequested;
+
     readonly DataGridView _grid = new()
     {
         Dock = DockStyle.Fill,
@@ -24,11 +28,7 @@ internal sealed class DownloadsControl : UserControl, ISyncObserver
     readonly Button _cancelButton;
     readonly Dictionary<string, int> _rowByVideo = [];
 
-    CancellationTokenSource? _cancellation;
-    bool _running;
     int _completed, _toDownload;
-
-    public bool IsRunning => _running;
 
     public DownloadsControl()
     {
@@ -39,7 +39,7 @@ internal sealed class DownloadsControl : UserControl, ISyncObserver
         _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "progress", HeaderText = Strings.DownloadsColProgress, FillWeight = 12 });
 
         var toolbar = Ui.Toolbar();
-        _cancelButton = Ui.Button(Strings.DownloadsCancel, (_, _) => _cancellation?.Cancel());
+        _cancelButton = Ui.Button(Strings.DownloadsCancel, (_, _) => CancelRequested?.Invoke());
         _cancelButton.Enabled = false;
         toolbar.Controls.Add(_cancelButton);
 
@@ -52,41 +52,29 @@ internal sealed class DownloadsControl : UserControl, ISyncObserver
         Controls.Add(toolbar);
     }
 
-    /// <summary>Starts (or refuses, if already running) a sync over the given profiles.</summary>
-    public async void Run(IReadOnlyList<SyncProfile> profiles)
+    /// <summary>Clears the view and arms the Cancel button for a new run.</summary>
+    public void PrepareForRun() => Post(() =>
     {
-        if (_running) return;
-        _running = true;
         _grid.Rows.Clear();
         _rowByVideo.Clear();
         _completed = 0;
         _toDownload = 0;
         _overall.Value = 0;
         _overall.Maximum = 1;
+        _phase.Text = "";
         _cancelButton.Enabled = true;
-        _cancellation = new CancellationTokenSource();
+    });
 
-        try
-        {
-            await Resilience.GuardAsync("GUI sync run", async () =>
-            {
-                if (Settings.AutoUpdateYtDlp.Value) await YtDlpManager.TryUpdateAsync(_cancellation.Token);
-                var summary = await SyncEngine.SyncAllAsync(profiles, this, _cancellation.Token);
-                SetPhase(string.Format(Strings.DownloadsSummaryFormat, summary.Downloaded, summary.SkippedLive, summary.Failed, summary.AlreadyPresent));
-            });
-        }
-        finally
-        {
-            _cancelButton.Enabled = false;
-            _cancellation?.Dispose();
-            _cancellation = null;
-            _running = false;
-        }
-    }
+    /// <summary>Marks the run finished: shows the summary line and disables Cancel.</summary>
+    public void Finish(string summary) => Post(() =>
+    {
+        _phase.Text = summary;
+        _cancelButton.Enabled = false;
+    });
 
     // ---- ISyncObserver (engine threads → UI thread) ----
 
-    public void OnPhase(string message) => SetPhase(message);
+    public void OnPhase(string message) => Post(() => _phase.Text = message);
 
     public void OnPlaylistScanned(int playlistTotal, int alreadyPresent, int toDownload) => Post(() =>
     {
@@ -123,8 +111,6 @@ internal sealed class DownloadsControl : UserControl, ISyncObserver
         _completed++;
         _overall.Value = Math.Min(_completed, _overall.Maximum);
     });
-
-    void SetPhase(string message) => Post(() => _phase.Text = message);
 
     void Post(Action action)
     {
