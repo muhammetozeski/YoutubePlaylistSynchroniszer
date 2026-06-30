@@ -85,8 +85,16 @@ internal static partial class YtDlpManager
             "--fragment-retries", Settings.YtDlpRetries.Value.ToString(),
         };
         if (_ffmpegPath is not null) arguments.AddRange(["--ffmpeg-location", _ffmpegPath]);
+
+        // Combine all skip conditions into ONE match-filter (yt-dlp ANDs within a filter, ORs across them).
+        var filters = new List<string>();
         if (Settings.SkipLiveStreams.Value)
-            arguments.AddRange(["--match-filter", "live_status != is_live & live_status != is_upcoming & live_status != post_live"]);
+            filters.Add("live_status != is_live & live_status != is_upcoming & live_status != post_live");
+        int maxMinutes = Settings.MaxVideoDurationMinutes.Value;
+        if (maxMinutes > 0)
+            filters.Add($"duration <=? {maxMinutes * 60}"); // <=? lets unknown-duration videos still download
+        if (filters.Count > 0)
+            arguments.AddRange(["--match-filter", string.Join(" & ", filters)]);
         arguments.AddRange(options.BuildFormatArguments());
         arguments.AddRange(["-o", Path.Combine(workFolder, AppConstants.DownloadOutputTemplate)]);
         arguments.Add(AppConstants.ShortVideoUrlBase + videoId);

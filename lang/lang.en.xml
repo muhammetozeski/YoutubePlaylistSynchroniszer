@@ -102,7 +102,7 @@
   <s name="DownloadsCtxOpenVideo">Open video in browser</s>
   <s name="DownloadsStatusConverting">Converting…</s>
   <s name="DownloadsStatusDone">✅ Done</s>
-  <s name="DownloadsStatusSkippedLive">⏭ Skipped (live stream)</s>
+  <s name="DownloadsStatusSkippedLive">⏭ Skipped (filtered)</s>
   <s name="DownloadsStatusFailedFormat">⚠ Error: {0}</s>
   <s name="DownloadsSummaryFormat">Downloaded {0} • Skipped {1} • Failed {2} • Already present {3}</s>
 
@@ -115,6 +115,7 @@
   <s name="SettingsSkipLiveLabel">Skip live streams</s>
   <s name="SettingsAutoUpdateYtDlpLabel">Update yt-dlp before a sync</s>
   <s name="SettingsConcurrencyLabel">Concurrent downloads:</s>
+  <s name="SettingsMaxDurationLabel">Max video duration (min, 0=unlimited):</s>
   <s name="SettingsDarkThemeLabel">Dark theme</s>
   <s name="SettingsBulkConfirmLabel">Confirm bulk selection actions</s>
 

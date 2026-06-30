@@ -111,7 +111,7 @@ internal static class Strings
     public static string DownloadsCtxOpenVideo = "Videoyu tarayıcıda aç";
     public static string DownloadsStatusConverting = "Dönüştürülüyor…";
     public static string DownloadsStatusDone = "✅ Tamamlandı";
-    public static string DownloadsStatusSkippedLive = "⏭ Atlandı (canlı yayın)";
+    public static string DownloadsStatusSkippedLive = "⏭ Atlandı (filtre)";
     public static string DownloadsStatusFailedFormat = "⚠ Hata: {0}";
     public static string DownloadsSummaryFormat = "İndirildi {0} • Atlandı {1} • Hata {2} • Zaten var {3}";
 
@@ -124,6 +124,7 @@ internal static class Strings
     public static string SettingsSkipLiveLabel = "Canlı yayınları atla";
     public static string SettingsAutoUpdateYtDlpLabel = "Senkronizasyondan önce yt-dlp'yi güncelle";
     public static string SettingsConcurrencyLabel = "Eşzamanlı indirme:";
+    public static string SettingsMaxDurationLabel = "Maksimum video süresi (dk, 0=sınırsız):";
     public static string SettingsDarkThemeLabel = "Karanlık tema";
     public static string SettingsBulkConfirmLabel = "Toplu seçim işlemlerinde onay sor";
 

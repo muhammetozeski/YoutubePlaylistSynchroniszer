@@ -9,7 +9,7 @@ internal static class AppConstants
 {
     public const string AppTitle = "YouTube Playlist Synchronizer";
     public const string AppFolderName = "YoutubePlaylistSynchroniszer";
-    public const string Version = "0.3.0";
+    public const string Version = "0.3.1";
 
     /// <summary>Full path to the running executable. Not null for file-based exes.</summary>
     public static readonly string ThisExePath = Environment.ProcessPath ?? Application.ExecutablePath;

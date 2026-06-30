@@ -38,6 +38,7 @@ internal sealed class SettingsControl : UserControl
         layout.Controls.Add(Ui.Check(Strings.SettingsAutoUpdateYtDlpLabel, Settings.AutoUpdateYtDlp, (s, _) =>
             Persist(() => Settings.AutoUpdateYtDlp.Value = ((CheckBox)s!).Checked)));
         layout.Controls.Add(BuildConcurrencyRow());
+        layout.Controls.Add(BuildMaxDurationRow());
 
         Controls.Add(layout);
     }
@@ -69,6 +70,17 @@ internal sealed class SettingsControl : UserControl
 
         var spinner = new NumericUpDown { Minimum = 1, Maximum = 8, Value = Math.Clamp(Settings.MaxConcurrentDownloads.Value, 1, 8), Width = 60, Margin = new Padding(4) };
         spinner.ValueChanged += (_, _) => Persist(() => Settings.MaxConcurrentDownloads.Value = (int)spinner.Value);
+        row.Controls.Add(spinner);
+        return row;
+    }
+
+    Control BuildMaxDurationRow()
+    {
+        var row = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true, WrapContents = false, Margin = new Padding(0) };
+        row.Controls.Add(Ui.Label(Strings.SettingsMaxDurationLabel));
+
+        var spinner = new NumericUpDown { Minimum = 0, Maximum = 100000, Value = Math.Clamp(Settings.MaxVideoDurationMinutes.Value, 0, 100000), Width = 90, Margin = new Padding(4) };
+        spinner.ValueChanged += (_, _) => Persist(() => Settings.MaxVideoDurationMinutes.Value = (int)spinner.Value);
         row.Controls.Add(spinner);
         return row;
     }
