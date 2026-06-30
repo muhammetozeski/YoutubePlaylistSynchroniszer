@@ -63,6 +63,7 @@
   <s name="CtxCheckSelected">Check selected</s>
   <s name="CtxUncheckSelected">Uncheck selected</s>
   <s name="CtxViewContents">View contents…</s>
+  <s name="CtxOpenInBrowser">Open on YouTube (browser)</s>
   <s name="ConfirmSelectAllFormat">Check all {0} playlists?</s>
   <s name="ConfirmClearAll">Clear all checkmarks?</s>
   <s name="DontAskAgain">Don't ask again</s>

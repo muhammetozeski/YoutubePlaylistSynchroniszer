@@ -72,6 +72,7 @@ internal static class Strings
     public static string CtxCheckSelected = "Seçilenleri işaretle";
     public static string CtxUncheckSelected = "Seçilenlerin işaretini kaldır";
     public static string CtxViewContents = "İçeriği gör…";
+    public static string CtxOpenInBrowser = "YouTube'da aç (tarayıcı)";
     public static string ConfirmSelectAllFormat = "{0} çalma listesinin tümü işaretlensin mi?";
     public static string ConfirmClearAll = "Tüm işaretler kaldırılsın mı?";
     public static string DontAskAgain = "Bir daha sorma";

@@ -74,6 +74,7 @@ internal sealed class PlaylistsControl : UserControl
         menu.Items.Add(Strings.CtxUncheckSelected, null, (_, _) => SetRowsChecked(SelectedProfileRows(), false));
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add(Strings.CtxViewContents, null, (_, _) => ViewContents(_grid.CurrentRow));
+        menu.Items.Add(Strings.CtxOpenInBrowser, null, (_, _) => OpenInBrowser(_grid.CurrentRow));
         _grid.ContextMenuStrip = menu;
     }
 
@@ -207,6 +208,12 @@ internal sealed class PlaylistsControl : UserControl
         if (row?.Tag is not SyncProfile profile) return;
         using var dialog = new PlaylistContentsDialog(new YouTubePlaylist(profile.PlaylistId, profile.PlaylistTitle, 0));
         dialog.ShowDialog(this);
+    }
+
+    void OpenInBrowser(DataGridViewRow? row)
+    {
+        if (row?.Tag is not SyncProfile profile) return;
+        OpenUrlInBrowser("https://www.youtube.com/playlist?list=" + profile.PlaylistId);
     }
 
     // A single user click on a checkbox; bulk/context updates set values with the handler suppressed.
