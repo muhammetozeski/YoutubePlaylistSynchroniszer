@@ -81,8 +81,13 @@ internal sealed class PlaylistsControl : UserControl
         _grid.Rows.Clear();
         foreach (var playlist in playlists)
         {
-            var profile = SyncProfileStore.Get(playlist.Id) ?? new SyncProfile { PlaylistId = playlist.Id };
-            profile.PlaylistTitle = playlist.Title; // keep the stored title fresh
+            var stored = SyncProfileStore.Get(playlist.Id);
+            var profile = stored ?? new SyncProfile { PlaylistId = playlist.Id };
+            if (profile.PlaylistTitle != playlist.Title)
+            {
+                profile.PlaylistTitle = playlist.Title; // keep the cached title fresh
+                if (stored is not null) SyncProfileStore.Upsert(profile); // persist the refreshed title
+            }
 
             int rowIndex = _grid.Rows.Add();
             var row = _grid.Rows[rowIndex];
