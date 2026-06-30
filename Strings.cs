@@ -36,6 +36,7 @@ internal static class Strings
     // ---- account / auth tab ----
     public static string AuthHeader = "Google / YouTube Yetkilendirmesi";
     public static string AuthStatusSignedOutFormat = "Bağlı değil. Devam etmek için bir credential JSON dosyası seçin.";
+    public static string AuthStatusCredentialLoaded = "Credential yüklendi. Tarayıcıyla giriş yapın veya bir refresh token girin.";
     public static string AuthStatusSignedInFormat = "Bağlı ✓  ({0})";
     public static string AuthPickCredential = "Credential JSON seç…";
     public static string AuthPasteRefresh = "Refresh token yapıştır…";
@@ -61,6 +62,9 @@ internal static class Strings
     public static string PlaylistsConfigure = "Ayarla…";
     public static string PlaylistsSyncSelected = "Seçilenleri senkronize et";
     public static string PlaylistsNeedAuth = "Çalma listelerini getirmek için önce Hesap sekmesinden giriş yapın.";
+    public static string PlaylistsConfigureColumn = "Ayarla…";
+    public static string PlaylistsNeedTargetFormat = "Şu listeler için önce 'Ayarla…' ile hedef klasör seçin:\n{0}";
+    public static string PlaylistsNothingSelected = "Senkronize edilecek çalma listesi seçilmedi.";
 
     // ---- media / quality ----
     public static string MediaKindMusic = "Müzik";

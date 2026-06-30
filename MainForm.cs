@@ -3,11 +3,19 @@ namespace YoutubePlaylistSynchroniszer;
 /// <summary>
 /// The application shell: a tabbed window where each feature lives on its own page (Account, Playlists,
 /// Downloads, Settings, Logs). Pages are <see cref="UserControl"/>s docked to fill, so the whole layout
-/// is resolution-independent (no absolute coordinates).
+/// is resolution-independent (no absolute coordinates). The shell only wires the pages together.
 /// </summary>
 internal sealed class MainForm : Form
 {
     readonly TabControl _tabs = new() { Dock = DockStyle.Fill };
+
+    readonly AccountControl _account = new();
+    readonly PlaylistsControl _playlists = new();
+    readonly DownloadsControl _downloads = new();
+    readonly SettingsControl _settings = new();
+    readonly LogsControl _logs = new();
+
+    TabPage _downloadsPage = null!;
 
     public MainForm()
     {
@@ -17,22 +25,32 @@ internal sealed class MainForm : Form
         Size = new Size(Math.Max(MinimumSize.Width, Settings.WindowWidth), Math.Max(MinimumSize.Height, Settings.WindowHeight));
         Font = new Font("Segoe UI", 9f);
 
-        // Real feature pages are added as their UserControls are built; the shell only owns the tabs.
-        AddPage(Strings.TabAccount);
-        AddPage(Strings.TabPlaylists);
-        AddPage(Strings.TabDownloads);
-        AddPage(Strings.TabSettings);
-        AddPage(Strings.TabLogs);
+        AddPage(Strings.TabAccount, _account);
+        AddPage(Strings.TabPlaylists, _playlists);
+        _downloadsPage = AddPage(Strings.TabDownloads, _downloads);
+        AddPage(Strings.TabSettings, _settings);
+        AddPage(Strings.TabLogs, _logs);
 
         Controls.Add(_tabs);
+
+        _account.AuthChanged += _playlists.NotifyAuthChanged;
+        _playlists.SyncRequested += StartSync;
         FormClosing += PersistWindowSize;
     }
 
-    void AddPage(string title, Control? content = null)
+    TabPage AddPage(string title, Control content)
     {
         var page = new TabPage(title) { Padding = new Padding(10) };
-        if (content is not null) { content.Dock = DockStyle.Fill; page.Controls.Add(content); }
+        content.Dock = DockStyle.Fill;
+        page.Controls.Add(content);
         _tabs.TabPages.Add(page);
+        return page;
+    }
+
+    void StartSync(IReadOnlyList<SyncProfile> profiles)
+    {
+        _tabs.SelectedTab = _downloadsPage;
+        _downloads.Run(profiles);
     }
 
     void PersistWindowSize(object? sender, FormClosingEventArgs e)

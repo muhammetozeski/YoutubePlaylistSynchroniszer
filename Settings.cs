@@ -13,6 +13,9 @@ internal static class Settings
     /// <summary>UI language code ("tr" or "en"). Loaded into <see cref="Strings"/> at startup. Turkish default.</summary>
     public static readonly Setting<string> Language = new("tr");
 
+    /// <summary>Cached channel title of the signed-in account, shown as the "connected as …" label.</summary>
+    public static readonly Setting<string> AccountLabel = new("");
+
     /// <summary>Delete the Cache folder contents after a sync run finishes.</summary>
     public static readonly Setting<bool> CleanCacheAfterSync = new(true);
 

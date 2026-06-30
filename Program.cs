@@ -29,6 +29,7 @@ internal static class Program
         SettingsManager.LoadSettings();
         LoggerHost.Initialize();
         LocManager.Init();
+        CredentialStore.Load();
         InstallGlobalExceptionLogging();
         Log($"{AppConstants.AppTitle} v{AppConstants.Version} starting (data: {ConfigPathResolver.DataFolder})", LogLevel.Info);
     }
