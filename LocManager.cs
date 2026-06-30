@@ -47,9 +47,11 @@ internal static class LocManager
     {
         try
         {
-            // Always keep an editable Turkish baseline file next to the exe (write once if missing).
+            // Always keep an editable Turkish baseline file under UserData (write once if missing), and
+            // extract the embedded English file so it appears in the language list and can be edited.
             string trPath = PathFor("tr");
             if (!File.Exists(trPath)) WriteXml(trPath, "Türkçe");
+            ExtractEmbeddedLanguage("en");
 
             string lang = (Settings.Language.Value ?? "tr").Trim().ToLowerInvariant();
             if (lang is "" or "tr") return;
@@ -59,6 +61,23 @@ internal static class LocManager
             else Log($"Language file not found: {path}; keeping Turkish defaults.", LogLevel.Warning);
         }
         catch (Exception ex) { Log("Localization init failed: " + ex.Message, LogLevel.Warning); }
+    }
+
+    /// <summary>Writes an embedded <c>lang.&lt;code&gt;.xml</c> resource to the config folder if it is not
+    /// already there, so a single-file exe still offers that language without shipping a loose file.</summary>
+    static void ExtractEmbeddedLanguage(string code)
+    {
+        try
+        {
+            string path = PathFor(code);
+            if (File.Exists(path)) return;
+            using var stream = typeof(LocManager).Assembly.GetManifestResourceStream($"lang.{code}.xml");
+            if (stream is null) return;
+            using var reader = new StreamReader(stream);
+            File.WriteAllText(path, reader.ReadToEnd(), new UTF8Encoding(false));
+            Log($"Extracted embedded language file: {path}", LogLevel.Info);
+        }
+        catch (Exception ex) { Log("Embedded language extract failed: " + ex.Message, LogLevel.Warning); }
     }
 
     /// <summary>Reflection-writes the current field values to an XML file (used for the lang.tr.xml baseline).</summary>

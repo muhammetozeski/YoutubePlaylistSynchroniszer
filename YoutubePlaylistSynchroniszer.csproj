@@ -32,12 +32,12 @@
     <PackageReference Include="Polly" Version="8.4.2" />
   </ItemGroup>
 
-  <!-- English overrides ship as lang.en.xml next to the exe; Turkish uses the compiled-in
-       Strings defaults and is written to lang.tr.xml on first run. -->
+  <!-- English ships EMBEDDED in the single exe and is extracted to UserData on first run, so the exe
+       needs no loose files. Turkish uses the compiled-in Strings defaults (written to lang.tr.xml). -->
   <ItemGroup>
-    <Content Include="lang\lang.en.xml" Link="lang.en.xml" Condition="Exists('lang\lang.en.xml')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <!-- WithCulture=false: the ".en." in the filename would otherwise be read as the "en" culture and the
+         file would land in a satellite assembly instead of being embedded in the main exe. -->
+    <EmbeddedResource Include="lang\lang.en.xml" LogicalName="lang.en.xml" WithCulture="false" Condition="Exists('lang\lang.en.xml')" />
   </ItemGroup>
 
 </Project>
