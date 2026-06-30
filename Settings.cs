@@ -48,6 +48,13 @@ internal static class Settings
     /// <summary>Default target folder applied by the "video preset" bulk action.</summary>
     public static readonly Setting<string> DefaultVideoFolder = new("");
 
+    /// <summary>Browser whose cookies yt-dlp uses (chrome/edge/firefox/…) to pass YouTube's
+    /// "confirm you're not a bot" check. Empty = don't use browser cookies.</summary>
+    public static readonly Setting<string> CookiesFromBrowser = new("");
+
+    /// <summary>Path to a Netscape-format cookies.txt for yt-dlp (used only when no browser is set).</summary>
+    public static readonly Setting<string> CookiesFile = new("");
+
     /// <summary>Persisted main-window size so the responsive layout reopens where the user left it.</summary>
     public static readonly Setting<int> WindowWidth = new(1000);
     public static readonly Setting<int> WindowHeight = new(680);

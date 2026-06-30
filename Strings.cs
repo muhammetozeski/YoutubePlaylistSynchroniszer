@@ -116,6 +116,32 @@ internal static class Strings
     public static string DownloadsStatusSkippedLive = "⏭ Atlandı (filtre)";
     public static string DownloadsStatusFailedFormat = "⚠ Hata: {0}";
     public static string DownloadsSummaryFormat = "İndirildi {0} • Atlandı {1} • Hata {2} • Zaten var {3}";
+    public static string DownloadsStatusDeleted = "🗑 Silindi";
+
+    // ---- downloads list right-click menu ----
+    public static string DlMenuOpen = "Aç";
+    public static string DlMenuCopy = "Kopyala";
+    public static string DlMenuList = "Liste";
+    public static string DlOpenThumbnail = "Küçük resmi (thumbnail) aç";
+    public static string DlOpenFile = "Dosyayı aç (oynat)";
+    public static string DlOpenFileLocation = "Dosya konumunu aç";
+    public static string DlOpenTargetFolder = "Hedef klasörü aç";
+    public static string DlCopyShortLink = "Kısa link (youtu.be)";
+    public static string DlCopyLongLink = "Uzun link (watch)";
+    public static string DlCopyEmbedLink = "Embed link";
+    public static string DlCopyVideoId = "Video ID";
+    public static string DlCopyTitle = "Başlık";
+    public static string DlCopyTitleAndLink = "Başlık + link";
+    public static string DlCopyFilePath = "Dosya yolu";
+    public static string DlCopyStatus = "Durum / hata metni";
+    public static string DlCopyYtDlpCommand = "yt-dlp komutu";
+    public static string DlCopySelectedLinks = "Seçili linkleri kopyala";
+    public static string DlCopyAllLinks = "Tüm linkleri kopyala";
+    public static string DlCopyFailedLinks = "Başarısızların linklerini kopyala";
+    public static string DlRemoveRow = "Satırı listeden kaldır";
+    public static string DlClearCompleted = "Tamamlananları temizle";
+    public static string DlDeleteFile = "Dosyayı sil";
+    public static string DlDeleteFileConfirmFormat = "Bu dosya silinsin mi?\n{0}";
 
     // ---- settings tab ----
     public static string SettingsHeader = "Ayarlar";
@@ -129,6 +155,9 @@ internal static class Strings
     public static string SettingsMaxDurationLabel = "Maksimum video süresi (dk, 0=sınırsız):";
     public static string SettingsDefaultAudioFolderLabel = "Varsayılan ses klasörü:";
     public static string SettingsDefaultVideoFolderLabel = "Varsayılan video klasörü:";
+    public static string SettingsCookiesBrowserLabel = "Çerez kaynağı tarayıcı (bot doğrulaması için):";
+    public static string SettingsCookiesFileLabel = "Çerez dosyası (cookies.txt):";
+    public static string CookiesBrowserNone = "(yok)";
     public static string ConfigMaxDurationOverrideLabel = "Maksimum süreyi bu liste için ayarla (dk):";
     public static string SettingsDarkThemeLabel = "Karanlık tema";
     public static string SettingsBulkConfirmLabel = "Toplu seçim işlemlerinde onay sor";

@@ -41,6 +41,8 @@ internal sealed class SettingsControl : UserControl
         layout.Controls.Add(BuildMaxDurationRow());
         layout.Controls.Add(BuildFolderRow(Strings.SettingsDefaultAudioFolderLabel, Settings.DefaultAudioFolder));
         layout.Controls.Add(BuildFolderRow(Strings.SettingsDefaultVideoFolderLabel, Settings.DefaultVideoFolder));
+        layout.Controls.Add(BuildCookiesBrowserRow());
+        layout.Controls.Add(BuildFileRow(Strings.SettingsCookiesFileLabel, Settings.CookiesFile, "cookies|*.txt|Tüm dosyalar|*.*"));
 
         Controls.Add(layout);
     }
@@ -101,6 +103,43 @@ internal sealed class SettingsControl : UserControl
             if (Directory.Exists(box.Text)) dialog.SelectedPath = box.Text;
             if (dialog.ShowDialog() != DialogResult.OK) return;
             box.Text = dialog.SelectedPath;
+            Persist(() => setting.Value = box.Text.Trim());
+        }));
+        return row;
+    }
+
+    static readonly string[] CookieBrowsers = ["chrome", "edge", "firefox", "brave", "opera", "vivaldi", "chromium"];
+
+    Control BuildCookiesBrowserRow()
+    {
+        var row = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true, WrapContents = false, Margin = new Padding(0) };
+        row.Controls.Add(Ui.Label(Strings.SettingsCookiesBrowserLabel));
+
+        var combo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 140, Margin = new Padding(4) };
+        combo.Items.Add(Strings.CookiesBrowserNone);
+        combo.Items.AddRange([.. CookieBrowsers.Cast<object>()]);
+        int current = Array.IndexOf(CookieBrowsers, Settings.CookiesFromBrowser.Value.Trim().ToLowerInvariant());
+        combo.SelectedIndex = current >= 0 ? current + 1 : 0;
+        combo.SelectedIndexChanged += (_, _) =>
+            Persist(() => Settings.CookiesFromBrowser.Value = combo.SelectedIndex <= 0 ? "" : CookieBrowsers[combo.SelectedIndex - 1]);
+        row.Controls.Add(combo);
+        return row;
+    }
+
+    Control BuildFileRow(string label, Setting<string> setting, string filter)
+    {
+        var row = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true, WrapContents = false, Margin = new Padding(0) };
+        row.Controls.Add(Ui.Label(label));
+
+        var box = new TextBox { Text = setting.Value, Width = 340, Margin = new Padding(4) };
+        box.Leave += (_, _) => Persist(() => setting.Value = box.Text.Trim());
+        row.Controls.Add(box);
+        row.Controls.Add(Ui.Button(Strings.BtnBrowse, (_, _) =>
+        {
+            using var dialog = new OpenFileDialog { Filter = filter };
+            if (File.Exists(box.Text)) dialog.FileName = box.Text;
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            box.Text = dialog.FileName;
             Persist(() => setting.Value = box.Text.Trim());
         }));
         return row;

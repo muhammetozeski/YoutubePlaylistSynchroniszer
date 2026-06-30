@@ -85,6 +85,7 @@ internal static partial class YtDlpManager
             "--fragment-retries", Settings.YtDlpRetries.Value.ToString(),
         };
         if (_ffmpegPath is not null) arguments.AddRange(["--ffmpeg-location", _ffmpegPath]);
+        arguments.AddRange(CookieArguments());
 
         // Combine all skip conditions into ONE match-filter (yt-dlp ANDs within a filter, ORs across them).
         var filters = new List<string>();
@@ -99,6 +100,28 @@ internal static partial class YtDlpManager
         arguments.AddRange(["-o", Path.Combine(workFolder, AppConstants.DownloadOutputTemplate)]);
         arguments.Add(AppConstants.ShortVideoUrlBase + videoId);
         return arguments;
+    }
+
+    /// <summary>yt-dlp cookie source (to pass YouTube's bot check): a browser if set, else a cookies.txt.</summary>
+    static IReadOnlyList<string> CookieArguments()
+    {
+        string browser = Settings.CookiesFromBrowser.Value.Trim();
+        if (!string.IsNullOrEmpty(browser)) return ["--cookies-from-browser", browser];
+
+        string file = Settings.CookiesFile.Value.Trim();
+        if (!string.IsNullOrEmpty(file) && File.Exists(file)) return ["--cookies", file];
+        return [];
+    }
+
+    /// <summary>A copy-pasteable yt-dlp command for one video, including the current cookie source — handy
+    /// for debugging the "confirm you're not a bot" error in a terminal.</summary>
+    public static string BuildDiagnosticCommand(string videoId)
+    {
+        var parts = new List<string> { "yt-dlp" };
+        parts.AddRange(CookieArguments());
+        parts.Add(AppConstants.ShortVideoUrlBase + videoId);
+        // Quote any part with a space (e.g. a cookies path under "My Documents") so it pastes correctly.
+        return string.Join(' ', parts.Select(p => p.Contains(' ') ? $"\"{p}\"" : p));
     }
 
     /// <summary>The downloaded media file in the work folder: matches the id, is not an image, and is not a

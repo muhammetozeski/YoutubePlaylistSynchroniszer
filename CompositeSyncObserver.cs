@@ -14,9 +14,9 @@ internal sealed class CompositeSyncObserver(params ISyncObserver[] observers) : 
         foreach (var observer in observers) observer.OnPlaylistScanned(playlistTotal, alreadyPresent, toDownload);
     }
 
-    public void OnQueued(IReadOnlyList<PlaylistVideo> queued)
+    public void OnQueued(IReadOnlyList<PlaylistVideo> queued, string targetFolder)
     {
-        foreach (var observer in observers) observer.OnQueued(queued);
+        foreach (var observer in observers) observer.OnQueued(queued, targetFolder);
     }
 
     public void OnItemStarted(string videoId, string title, int index, int total)
@@ -29,8 +29,8 @@ internal sealed class CompositeSyncObserver(params ISyncObserver[] observers) : 
         foreach (var observer in observers) observer.OnItemProgress(videoId, percent);
     }
 
-    public void OnItemFinished(string videoId, DownloadOutcome outcome, string? message)
+    public void OnItemFinished(string videoId, DownloadOutcome outcome, string? message, string? filePath)
     {
-        foreach (var observer in observers) observer.OnItemFinished(videoId, outcome, message);
+        foreach (var observer in observers) observer.OnItemFinished(videoId, outcome, message, filePath);
     }
 }

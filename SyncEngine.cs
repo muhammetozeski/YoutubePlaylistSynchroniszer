@@ -22,7 +22,7 @@ internal static class SyncEngine
             var missing = videos.Where(v => !existing.Contains(v.Id)).ToList();
             int alreadyPresent = videos.Count - missing.Count;
             observer?.OnPlaylistScanned(videos.Count, alreadyPresent, missing.Count);
-            observer?.OnQueued(missing); // list everything up front, then download
+            observer?.OnQueued(missing, targetFolder); // list everything up front, then download
 
             int downloaded = 0, skipped = 0, failed = 0, index = 0;
             using var gate = new SemaphoreSlim(Math.Max(1, Settings.MaxConcurrentDownloads.Value));
@@ -44,7 +44,7 @@ internal static class SyncEngine
                         case DownloadOutcome.SkippedLive: Interlocked.Increment(ref skipped); break;
                         default: Interlocked.Increment(ref failed); break;
                     }
-                    observer?.OnItemFinished(video.Id, result.Outcome, result.Message);
+                    observer?.OnItemFinished(video.Id, result.Outcome, result.Message, result.FilePath);
                 }
                 finally { gate.Release(); }
             });

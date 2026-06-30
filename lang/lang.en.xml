@@ -107,6 +107,32 @@
   <s name="DownloadsStatusSkippedLive">⏭ Skipped (filtered)</s>
   <s name="DownloadsStatusFailedFormat">⚠ Error: {0}</s>
   <s name="DownloadsSummaryFormat">Downloaded {0} • Skipped {1} • Failed {2} • Already present {3}</s>
+  <s name="DownloadsStatusDeleted">🗑 Deleted</s>
+
+  <!-- downloads list right-click menu -->
+  <s name="DlMenuOpen">Open</s>
+  <s name="DlMenuCopy">Copy</s>
+  <s name="DlMenuList">List</s>
+  <s name="DlOpenThumbnail">Open thumbnail</s>
+  <s name="DlOpenFile">Open file (play)</s>
+  <s name="DlOpenFileLocation">Open file location</s>
+  <s name="DlOpenTargetFolder">Open target folder</s>
+  <s name="DlCopyShortLink">Short link (youtu.be)</s>
+  <s name="DlCopyLongLink">Long link (watch)</s>
+  <s name="DlCopyEmbedLink">Embed link</s>
+  <s name="DlCopyVideoId">Video ID</s>
+  <s name="DlCopyTitle">Title</s>
+  <s name="DlCopyTitleAndLink">Title + link</s>
+  <s name="DlCopyFilePath">File path</s>
+  <s name="DlCopyStatus">Status / error text</s>
+  <s name="DlCopyYtDlpCommand">yt-dlp command</s>
+  <s name="DlCopySelectedLinks">Copy selected links</s>
+  <s name="DlCopyAllLinks">Copy all links</s>
+  <s name="DlCopyFailedLinks">Copy failed links</s>
+  <s name="DlRemoveRow">Remove row from list</s>
+  <s name="DlClearCompleted">Clear completed</s>
+  <s name="DlDeleteFile">Delete file</s>
+  <s name="DlDeleteFileConfirmFormat">Delete this file?\n{0}</s>
 
   <!-- settings -->
   <s name="SettingsHeader">Settings</s>
@@ -120,6 +146,9 @@
   <s name="SettingsMaxDurationLabel">Max video duration (min, 0=unlimited):</s>
   <s name="SettingsDefaultAudioFolderLabel">Default audio folder:</s>
   <s name="SettingsDefaultVideoFolderLabel">Default video folder:</s>
+  <s name="SettingsCookiesBrowserLabel">Cookies-from-browser (for the bot check):</s>
+  <s name="SettingsCookiesFileLabel">Cookies file (cookies.txt):</s>
+  <s name="CookiesBrowserNone">(none)</s>
   <s name="ConfigMaxDurationOverrideLabel">Override max duration for this playlist (min):</s>
   <s name="SettingsDarkThemeLabel">Dark theme</s>
   <s name="SettingsBulkConfirmLabel">Confirm bulk selection actions</s>

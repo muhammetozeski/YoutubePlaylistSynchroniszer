@@ -18,9 +18,10 @@ internal interface ISyncObserver
     void OnPhase(string message);
     void OnPlaylistScanned(int playlistTotal, int alreadyPresent, int toDownload);
     /// <summary>The full set of videos that will be downloaded, reported up front (before any download
-    /// starts) so the UI can list them all at once rather than one-by-one.</summary>
-    void OnQueued(IReadOnlyList<PlaylistVideo> queued);
+    /// starts) so the UI can list them all at once rather than one-by-one. <paramref name="targetFolder"/>
+    /// is where they sync to.</summary>
+    void OnQueued(IReadOnlyList<PlaylistVideo> queued, string targetFolder);
     void OnItemStarted(string videoId, string title, int index, int total);
     void OnItemProgress(string videoId, double percent);
-    void OnItemFinished(string videoId, DownloadOutcome outcome, string? message);
+    void OnItemFinished(string videoId, DownloadOutcome outcome, string? message, string? filePath);
 }
