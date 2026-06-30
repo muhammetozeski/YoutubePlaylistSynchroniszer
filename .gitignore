@@ -1,0 +1,20 @@
+# Build output
+bin/
+obj/
+
+# App runtime data (may contain personal credentials / tokens) — never commit
+UserData/
+Cache/
+
+# Personal credential material in any form
+*.enc
+client_secret*.json
+*credentials*.json
+*refresh*.txt
+
+# IDE
+.vs/
+*.user
+
+# Local language baseline written on first run
+lang.tr.xml
