@@ -75,6 +75,7 @@ internal sealed class PlaylistsControl : UserControl
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add(Strings.CtxViewContents, null, (_, _) => ViewContents(_grid.CurrentRow));
         menu.Items.Add(Strings.CtxOpenInBrowser, null, (_, _) => OpenInBrowser(_grid.CurrentRow));
+        menu.Items.Add(Strings.CtxCopyLink, null, (_, _) => CopyLink(_grid.CurrentRow));
         _grid.ContextMenuStrip = menu;
     }
 
@@ -214,6 +215,13 @@ internal sealed class PlaylistsControl : UserControl
     {
         if (row?.Tag is not SyncProfile profile) return;
         OpenUrlInBrowser("https://www.youtube.com/playlist?list=" + profile.PlaylistId);
+    }
+
+    void CopyLink(DataGridViewRow? row)
+    {
+        if (row?.Tag is not SyncProfile profile) return;
+        try { Clipboard.SetText("https://www.youtube.com/playlist?list=" + profile.PlaylistId); }
+        catch (Exception ex) { Log("Copy link failed: " + ex.Message, LogLevel.Warning); }
     }
 
     // A single user click on a checkbox; bulk/context updates set values with the handler suppressed.
