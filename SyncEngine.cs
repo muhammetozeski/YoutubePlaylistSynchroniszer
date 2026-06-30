@@ -11,7 +11,10 @@ internal static class SyncEngine
         Resilience.RunAsync($"Sync playlist '{profile.PlaylistTitle}'", async token =>
         {
             observer?.OnPhase(Strings.DownloadsStatusEnumerating);
-            var videos = await YouTubeApiClient.ListPlaylistVideosAsync(profile.PlaylistId, token);
+            // A playlist can list the same video more than once; de-duplicate by id so two tasks never
+            // share a per-video work folder (which would race on the file move) and the tallies stay correct.
+            var videos = (await YouTubeApiClient.ListPlaylistVideosAsync(profile.PlaylistId, token))
+                .DistinctBy(v => v.Id).ToList();
 
             observer?.OnPhase(Strings.DownloadsStatusScanning);
             var existing = ScanExistingVideoIds(profile.TargetFolder);
