@@ -20,6 +20,7 @@ internal sealed class MainForm : Form
     public MainForm()
     {
         Text = AppConstants.AppTitle;
+        Icon = AppIcon.Shared;
         StartPosition = FormStartPosition.CenterScreen;
         MinimumSize = new Size(820, 540);
         Size = new Size(Math.Max(MinimumSize.Width, Settings.WindowWidth), Math.Max(MinimumSize.Height, Settings.WindowHeight));

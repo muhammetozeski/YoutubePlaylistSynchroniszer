@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<strings>
+  <LanguageName>English</LanguageName>
+
+  <!-- main window -->
+  <s name="AppTitle">YouTube Playlist Synchronizer</s>
+  <s name="TabAccount">🔑  Account</s>
+  <s name="TabPlaylists">🎵  Playlists</s>
+  <s name="TabDownloads">⬇  Downloads</s>
+  <s name="TabSettings">⚙  Settings</s>
+  <s name="TabLogs">📜  Logs</s>
+
+  <!-- tray -->
+  <s name="TrayOpen">Open</s>
+  <s name="TrayExit">Exit</s>
+  <s name="TraySyncing">Syncing in the background… double-click to open.</s>
+  <s name="TrayIdle">YouTube Playlist Synchronizer</s>
+
+  <!-- common buttons -->
+  <s name="BtnOk">OK</s>
+  <s name="BtnCancel">Cancel</s>
+  <s name="BtnClose">Close</s>
+  <s name="BtnSave">Save</s>
+  <s name="BtnBrowse">Browse…</s>
+  <s name="BtnRefresh">Refresh</s>
+
+  <!-- account / auth -->
+  <s name="AuthHeader">Google / YouTube Authorization</s>
+  <s name="AuthStatusSignedOutFormat">Not connected. Pick a credential JSON file to continue.</s>
+  <s name="AuthStatusCredentialLoaded">Credential loaded. Sign in via the browser or enter a refresh token.</s>
+  <s name="AuthStatusSignedInFormat">Connected ✓  ({0})</s>
+  <s name="AuthPickCredential">Pick credential JSON…</s>
+  <s name="AuthPasteRefresh">Paste refresh token…</s>
+  <s name="AuthSignIn">Sign in with browser (mint a refresh token)</s>
+  <s name="AuthSignOut">Disconnect</s>
+  <s name="AuthCredentialFilter">Credential files|*.json;*.enc|All files|*.*</s>
+  <s name="AuthWaitingBrowser">Waiting for authorization in the browser…</s>
+  <s name="AuthSucceeded">Authorization succeeded. Refresh token saved.</s>
+  <s name="AuthFailedFormat">Authorization failed: {0}</s>
+  <s name="AuthNeedCredentialFirst">Pick a credential JSON file first.</s>
+  <s name="AuthRefreshPrompt">Refresh token (starts with 1//):</s>
+
+  <!-- playlists -->
+  <s name="PlaylistsHeader">My Playlists</s>
+  <s name="PlaylistsLoad">Fetch playlists</s>
+  <s name="PlaylistsLoadingFormat">Loading playlists…</s>
+  <s name="PlaylistsCountFormat">{0} playlists found.</s>
+  <s name="PlaylistsColTitle">Title</s>
+  <s name="PlaylistsColCount">Videos</s>
+  <s name="PlaylistsColTarget">Target folder</s>
+  <s name="PlaylistsColMode">Kind</s>
+  <s name="PlaylistsPickTarget">Pick target folder…</s>
+  <s name="PlaylistsConfigure">Configure…</s>
+  <s name="PlaylistsSyncSelected">Sync selected</s>
+  <s name="PlaylistsNeedAuth">Sign in on the Account tab first to fetch playlists.</s>
+  <s name="PlaylistsConfigureColumn">Configure…</s>
+  <s name="PlaylistsNeedTargetFormat">Pick a target folder via 'Configure…' for these first:\n{0}</s>
+  <s name="PlaylistsNothingSelected">No playlist selected to sync.</s>
+
+  <!-- media / quality -->
+  <s name="MediaKindMusic">Music</s>
+  <s name="MediaKindVideo">Video</s>
+  <s name="QualityBest">Best quality</s>
+  <s name="QualityCustom">Custom quality…</s>
+  <s name="QualityWorst">Lowest quality (save space)</s>
+  <s name="QualityConvertCodec2">Convert to Codec2 (ffmpeg)</s>
+  <s name="QualityVideoLabel">Video quality:</s>
+
+  <!-- downloads -->
+  <s name="DownloadsHeader">Download Progress</s>
+  <s name="DownloadsColItem">Item</s>
+  <s name="DownloadsColStatus">Status</s>
+  <s name="DownloadsColProgress">Progress</s>
+  <s name="DownloadsStart">Start</s>
+  <s name="DownloadsCancel">Cancel</s>
+  <s name="DownloadsStatusScanning">Scanning target folder…</s>
+  <s name="DownloadsStatusEnumerating">Reading playlist…</s>
+  <s name="DownloadsStatusDownloading">Downloading…</s>
+  <s name="DownloadsStatusConverting">Converting…</s>
+  <s name="DownloadsStatusDone">✅ Done</s>
+  <s name="DownloadsStatusSkippedLive">⏭ Skipped (live stream)</s>
+  <s name="DownloadsStatusFailedFormat">⚠ Error: {0}</s>
+  <s name="DownloadsSummaryFormat">Downloaded {0} • Skipped {1} • Failed {2} • Already present {3}</s>
+
+  <!-- settings -->
+  <s name="SettingsHeader">Settings</s>
+  <s name="SettingsLanguageLabel">Language:</s>
+  <s name="SettingsLanguageRestartNote">The language change is fully applied after restarting the app.</s>
+  <s name="SettingsLoggingLabel">Enable logging</s>
+  <s name="SettingsCleanCacheLabel">Clean the Cache folder after a sync</s>
+  <s name="SettingsSkipLiveLabel">Skip live streams</s>
+  <s name="SettingsAutoUpdateYtDlpLabel">Update yt-dlp before a sync</s>
+  <s name="SettingsConcurrencyLabel">Concurrent downloads:</s>
+
+  <!-- logs -->
+  <s name="LogsCopy">Copy logs</s>
+  <s name="LogsClear">Clear</s>
+  <s name="LogsOpenFolder">Open log folder</s>
+
+  <!-- resilience / errors -->
+  <s name="RetryPromptFormat">The operation failed:\n{0}\n\nRetry?</s>
+  <s name="FatalRestartPromptFormat">An unexpected error occurred:\n{0}\n\nRestart the app and try again?</s>
+  <s name="UnexpectedErrorFormat">Unexpected error:\n{0}</s>
+
+  <!-- CLI -->
+  <s name="CliSyncStarting">Sync starting (background)…</s>
+  <s name="CliSyncDoneFormat">Done. Downloaded {0}, failed {1}.</s>
+  <s name="CliNoProfiles">No saved playlists to sync. Configure them in the GUI first.</s>
+  <s name="HelpTextFormat">{0} v{1}\n\nUsage:\n  YoutubePlaylistSynchroniszer.exe [options]\n\nDouble-click to open the GUI.\n\nOptions:\n  --sync         Sync saved playlists with no window (tray icon), then exit\n  --gui          Open the graphical interface\n  -h, --help     This help\n  -v, --version  Version\n</s>
+</strings>
