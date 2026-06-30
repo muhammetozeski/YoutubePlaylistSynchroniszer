@@ -27,6 +27,7 @@ internal sealed class PlaylistsControl : UserControl
     readonly Label _status = Ui.Label("");
     readonly Button _loadButton;
     bool _suppressToggleHandler;
+    int _fillGeneration; // bumped on each reload so a stale background fill stops updating
 
     public PlaylistsControl()
     {
@@ -58,10 +59,11 @@ internal sealed class PlaylistsControl : UserControl
         _grid.Columns.Add(new DataGridViewCheckBoxColumn { Name = "select", HeaderText = "✓", FillWeight = 5 });
         _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "title", HeaderText = Strings.PlaylistsColTitle, FillWeight = 28, ReadOnly = true });
         _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "count", HeaderText = Strings.PlaylistsColCount, FillWeight = 7, ReadOnly = true });
-        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "created", HeaderText = Strings.PlaylistsColCreated, FillWeight = 12, ReadOnly = true });
-        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "mode", HeaderText = Strings.PlaylistsColMode, FillWeight = 8, ReadOnly = true });
-        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "quality", HeaderText = "Kalite", FillWeight = 14, ReadOnly = true });
-        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "target", HeaderText = Strings.PlaylistsColTarget, FillWeight = 18, ReadOnly = true });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "created", HeaderText = Strings.PlaylistsColCreated, FillWeight = 10, ReadOnly = true });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "lastAdded", HeaderText = Strings.PlaylistsColLastAdded, FillWeight = 14, ReadOnly = true });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "mode", HeaderText = Strings.PlaylistsColMode, FillWeight = 7, ReadOnly = true });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "quality", HeaderText = "Kalite", FillWeight = 12, ReadOnly = true });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "target", HeaderText = Strings.PlaylistsColTarget, FillWeight = 15, ReadOnly = true });
         _grid.Columns.Add(new DataGridViewButtonColumn { Name = "configure", HeaderText = "", Text = Strings.PlaylistsConfigureColumn, UseColumnTextForButtonValue = true, FillWeight = 10 });
     }
 
@@ -98,6 +100,7 @@ internal sealed class PlaylistsControl : UserControl
     void PopulateGrid(IReadOnlyList<YouTubePlaylist> playlists)
     {
         _grid.Rows.Clear();
+        int generation = ++_fillGeneration; // invalidate any in-flight last-added fill
         foreach (var playlist in playlists)
         {
             var stored = SyncProfileStore.Get(playlist.Id);
@@ -115,8 +118,47 @@ internal sealed class PlaylistsControl : UserControl
             row.Cells["title"].Value = playlist.Title;
             row.Cells["count"].Value = playlist.ItemCount;
             row.Cells["created"].Value = playlist.CreatedAt?.ToLocalTime().ToString("yyyy-MM-dd") ?? "";
+            row.Cells["lastAdded"].Value = "…"; // filled in the background (one API call per playlist)
             FillProfileCells(row, profile);
         }
+
+        _ = FillLastAddedDatesAsync(generation);
+    }
+
+    /// <summary>Fills the "last added" column in the background: for each playlist, the newest video's added
+    /// date (max of its items' added dates). Bounded concurrency; a reload bumps the generation to stop a
+    /// stale fill from writing into the new grid.</summary>
+    async Task FillLastAddedDatesAsync(int generation)
+    {
+        var targets = _grid.Rows.Cast<DataGridViewRow>()
+            .Where(r => r.Tag is SyncProfile)
+            .Select(r => (row: r, id: ((SyncProfile)r.Tag!).PlaylistId))
+            .ToList();
+
+        using var gate = new SemaphoreSlim(4);
+        var tasks = targets.Select(async target =>
+        {
+            await gate.WaitAsync();
+            try
+            {
+                if (generation != _fillGeneration) return;
+                DateTime? lastAdded = null;
+                try
+                {
+                    var videos = await YouTubeApiClient.ListPlaylistVideosAsync(target.id);
+                    var dates = videos.Where(v => v.AddedAt.HasValue).Select(v => v.AddedAt!.Value).ToList();
+                    if (dates.Count > 0) lastAdded = dates.Max();
+                }
+                catch (Exception ex) { Log("Last-added fetch failed for " + target.id + ": " + ex.Message, LogLevel.Warning); }
+
+                string text = lastAdded?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "—";
+                if (generation != _fillGeneration || IsDisposed || !IsHandleCreated) return;
+                try { BeginInvoke(() => { if (generation == _fillGeneration && target.row.Index >= 0) target.row.Cells["lastAdded"].Value = text; }); }
+                catch { /* handle torn down */ }
+            }
+            finally { gate.Release(); }
+        });
+        await Task.WhenAll(tasks);
     }
 
     static void FillProfileCells(DataGridViewRow row, SyncProfile profile)

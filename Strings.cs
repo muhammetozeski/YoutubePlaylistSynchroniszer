@@ -66,6 +66,7 @@ internal static class Strings
     public static string PlaylistsNeedTargetFormat = "Şu listeler için önce 'Ayarla…' ile hedef klasör seçin:\n{0}";
     public static string PlaylistsNothingSelected = "Senkronize edilecek çalma listesi seçilmedi.";
     public static string PlaylistsColCreated = "Oluşturulma";
+    public static string PlaylistsColLastAdded = "Son Eklenme Tarihi";
     public static string PlaylistsSelectAll = "Tümünü seç";
     public static string PlaylistsClearAll = "Seçimleri kaldır";
     public static string CtxCheckSelected = "Seçilenleri işaretle";

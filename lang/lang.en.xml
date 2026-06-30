@@ -57,6 +57,7 @@
   <s name="PlaylistsNeedTargetFormat">Pick a target folder via 'Configure…' for these first:\n{0}</s>
   <s name="PlaylistsNothingSelected">No playlist selected to sync.</s>
   <s name="PlaylistsColCreated">Created</s>
+  <s name="PlaylistsColLastAdded">Last added</s>
   <s name="PlaylistsSelectAll">Select all</s>
   <s name="PlaylistsClearAll">Clear selection</s>
   <s name="CtxCheckSelected">Check selected</s>
