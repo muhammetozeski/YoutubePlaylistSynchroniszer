@@ -64,9 +64,14 @@ internal static class Program
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) =>
         {
+            // A fatal, unhandled UI-thread error: log it, then offer to restart the app and try again.
             Log("UNHANDLED UI exception: " + e.Exception, LogLevel.Error);
-            try { NativeMessageBox.Error(string.Format(Strings.UnexpectedErrorFormat, e.Exception.Message)); }
-            catch (Exception ex) { Log("Error dialog failed: " + ex.Message, LogLevel.Warning); }
+            try
+            {
+                if (NativeMessageBox.Confirm(string.Format(Strings.FatalRestartPromptFormat, e.Exception.Message)))
+                    Resilience.RestartApp();
+            }
+            catch (Exception ex) { Log("Fatal dialog failed: " + ex.Message, LogLevel.Warning); }
         };
 
         Application.Run(new MainForm());
