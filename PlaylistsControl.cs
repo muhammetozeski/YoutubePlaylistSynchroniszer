@@ -51,7 +51,16 @@ internal sealed class PlaylistsControl : UserControl
 
         Controls.Add(_grid);
         Controls.Add(toolbar);
+        // Re-show effective targets when returning to this tab (e.g. after changing default folders).
+        VisibleChanged += (_, _) => { if (Visible) RefreshTargetCells(); };
         NotifyAuthChanged();
+    }
+
+    void RefreshTargetCells()
+    {
+        foreach (DataGridViewRow row in _grid.Rows)
+            if (row.Tag is SyncProfile profile)
+                row.Cells["target"].Value = string.IsNullOrWhiteSpace(profile.EffectiveTargetFolder) ? "—" : profile.EffectiveTargetFolder;
     }
 
     void BuildColumns()
@@ -61,10 +70,12 @@ internal sealed class PlaylistsControl : UserControl
         _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "count", HeaderText = Strings.PlaylistsColCount, FillWeight = 7, ReadOnly = true });
         _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "created", HeaderText = Strings.PlaylistsColCreated, FillWeight = 10, ReadOnly = true });
         _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "lastAdded", HeaderText = Strings.PlaylistsColLastAdded, FillWeight = 14, ReadOnly = true });
-        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "mode", HeaderText = Strings.PlaylistsColMode, FillWeight = 7, ReadOnly = true });
-        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "quality", HeaderText = "Kalite", FillWeight = 12, ReadOnly = true });
-        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "target", HeaderText = Strings.PlaylistsColTarget, FillWeight = 15, ReadOnly = true });
-        _grid.Columns.Add(new DataGridViewButtonColumn { Name = "configure", HeaderText = "", Text = Strings.PlaylistsConfigureColumn, UseColumnTextForButtonValue = true, FillWeight = 10 });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "mode", HeaderText = Strings.PlaylistsColMode, FillWeight = 6, ReadOnly = true });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "quality", HeaderText = "Kalite", FillWeight = 11, ReadOnly = true });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "target", HeaderText = Strings.PlaylistsColTarget, FillWeight = 14, ReadOnly = true });
+        _grid.Columns.Add(new DataGridViewButtonColumn { Name = "configure", HeaderText = "", Text = Strings.PlaylistsConfigureColumn, UseColumnTextForButtonValue = true, FillWeight = 9 });
+        _grid.Columns.Add(new DataGridViewButtonColumn { Name = "preset_audio", HeaderText = "", Text = Strings.MediaKindMusic, UseColumnTextForButtonValue = true, FillWeight = 7 });
+        _grid.Columns.Add(new DataGridViewButtonColumn { Name = "preset_video", HeaderText = "", Text = Strings.MediaKindVideo, UseColumnTextForButtonValue = true, FillWeight = 7 });
     }
 
     void BuildContextMenu()
@@ -170,22 +181,30 @@ internal sealed class PlaylistsControl : UserControl
     {
         row.Cells["mode"].Value = profile.Options.Kind == MediaKind.Video ? Strings.MediaKindVideo : Strings.MediaKindMusic;
         row.Cells["quality"].Value = profile.Options.Describe();
-        row.Cells["target"].Value = string.IsNullOrWhiteSpace(profile.TargetFolder) ? "—" : profile.TargetFolder;
+        row.Cells["target"].Value = string.IsNullOrWhiteSpace(profile.EffectiveTargetFolder) ? "—" : profile.EffectiveTargetFolder;
     }
 
     void OnCellContentClick(object? sender, DataGridViewCellEventArgs e)
     {
-        if (e.RowIndex < 0 || _grid.Columns[e.ColumnIndex].Name != "configure") return;
+        if (e.RowIndex < 0) return;
         var row = _grid.Rows[e.RowIndex];
         if (row.Tag is not SyncProfile profile) return;
 
-        using var dialog = new PlaylistConfigDialog(profile);
-        Theme.Apply(dialog);
-        if (dialog.ShowDialog(this) != DialogResult.OK) return;
-
-        profile.EnabledForBackgroundSync = (bool)(row.Cells["select"].Value ?? false);
-        SyncProfileStore.Upsert(profile);
-        FillProfileCells(row, profile);
+        switch (_grid.Columns[e.ColumnIndex].Name)
+        {
+            case "configure":
+                using (var dialog = new PlaylistConfigDialog(profile))
+                {
+                    Theme.Apply(dialog);
+                    if (dialog.ShowDialog(this) != DialogResult.OK) return;
+                }
+                profile.EnabledForBackgroundSync = (bool)(row.Cells["select"].Value ?? false);
+                SyncProfileStore.Upsert(profile);
+                FillProfileCells(row, profile);
+                break;
+            case "preset_audio": ApplyPreset([row], MediaKind.Music); break;
+            case "preset_video": ApplyPreset([row], MediaKind.Video); break;
+        }
     }
 
     void OnCellDoubleClick(object? sender, DataGridViewCellEventArgs e)
@@ -231,7 +250,6 @@ internal sealed class PlaylistsControl : UserControl
     /// matching default folder from Settings (so hundreds of playlists are set in one click).</summary>
     void ApplyPreset(IEnumerable<DataGridViewRow> rows, MediaKind kind)
     {
-        string defaultFolder = kind == MediaKind.Video ? Settings.DefaultVideoFolder.Value : Settings.DefaultAudioFolder.Value;
         var toPersist = new List<SyncProfile>();
         foreach (var row in rows)
         {
@@ -239,7 +257,7 @@ internal sealed class PlaylistsControl : UserControl
             profile.Options = kind == MediaKind.Video
                 ? new DownloadOptions { Kind = MediaKind.Video, VideoMaxHeight = 1080 }
                 : new DownloadOptions { Kind = MediaKind.Music, MusicTier = MusicQualityTier.Best };
-            if (!string.IsNullOrWhiteSpace(defaultFolder)) profile.TargetFolder = defaultFolder;
+            // Leave TargetFolder empty so the default-folder cascade applies (and tracks Settings changes).
             FillProfileCells(row, profile);
             if (profile.IsReadyToSync || SyncProfileStore.Get(profile.PlaylistId) is not null)
                 toPersist.Add(profile);

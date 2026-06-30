@@ -17,7 +17,8 @@ internal static class SyncEngine
                 .DistinctBy(v => v.Id).ToList();
 
             observer?.OnPhase(Strings.DownloadsStatusScanning);
-            var existing = ScanExistingVideoIds(profile.TargetFolder);
+            string targetFolder = profile.EffectiveTargetFolder; // explicit folder, else the kind's default
+            var existing = ScanExistingVideoIds(targetFolder);
             var missing = videos.Where(v => !existing.Contains(v.Id)).ToList();
             int alreadyPresent = videos.Count - missing.Count;
             observer?.OnPlaylistScanned(videos.Count, alreadyPresent, missing.Count);
@@ -35,7 +36,7 @@ internal static class SyncEngine
                     observer?.OnItemStarted(video.Id, video.Title, itemIndex, missing.Count);
 
                     var progress = new Progress<double>(percent => observer?.OnItemProgress(video.Id, percent));
-                    var result = await YtDlpManager.DownloadVideoAsync(video, profile.TargetFolder, profile.Options, progress, token);
+                    var result = await YtDlpManager.DownloadVideoAsync(video, targetFolder, profile.Options, progress, token);
 
                     switch (result.Outcome)
                     {
