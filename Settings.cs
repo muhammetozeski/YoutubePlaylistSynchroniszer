@@ -38,8 +38,15 @@ internal static class Settings
     /// <summary>Retry count handed to yt-dlp for transient network failures per video.</summary>
     public static readonly Setting<int> YtDlpRetries = new(10);
 
-    /// <summary>Skip videos longer than this many minutes (0 = no limit). Default 3 hours.</summary>
+    /// <summary>Skip videos longer than this many minutes (0 = no limit). Default 3 hours. A playlist can
+    /// override this via <see cref="DownloadOptions.MaxDurationMinutesOverride"/>.</summary>
     public static readonly Setting<int> MaxVideoDurationMinutes = new(180);
+
+    /// <summary>Default target folder applied by the "audio preset" bulk action.</summary>
+    public static readonly Setting<string> DefaultAudioFolder = new("");
+
+    /// <summary>Default target folder applied by the "video preset" bulk action.</summary>
+    public static readonly Setting<string> DefaultVideoFolder = new("");
 
     /// <summary>Persisted main-window size so the responsive layout reopens where the user left it.</summary>
     public static readonly Setting<int> WindowWidth = new(1000);

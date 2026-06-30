@@ -33,6 +33,9 @@ internal sealed class PlaylistConfigDialog : Form
     readonly CheckBox _embedThumb = new() { Text = "Kapak göm (thumbnail)", AutoSize = true, Margin = new Padding(8, 2, 8, 2) };
     readonly CheckBox _embedMeta = new() { Text = "Bilgileri göm (metadata)", AutoSize = true, Margin = new Padding(8, 2, 8, 2) };
 
+    readonly CheckBox _overrideDuration = new() { Text = Strings.ConfigMaxDurationOverrideLabel, AutoSize = true, Margin = new Padding(8, 4, 8, 2) };
+    readonly NumericUpDown _maxDuration = new() { Minimum = 0, Maximum = 100000, Width = 90, Margin = new Padding(24, 2, 8, 8) };
+
     public SyncProfile Result => _profile;
 
     public PlaylistConfigDialog(SyncProfile profile)
@@ -110,6 +113,14 @@ internal sealed class PlaylistConfigDialog : Form
         embedGroup.Controls.Add(embedFlow);
         content.Controls.Add(embedGroup);
 
+        // Per-playlist max duration override (overrides the global setting when checked).
+        var durationGroup = new GroupBox { Text = "Süre", Dock = DockStyle.Top, AutoSize = true };
+        var durationFlow = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false };
+        durationFlow.Controls.Add(_overrideDuration);
+        durationFlow.Controls.Add(_maxDuration);
+        durationGroup.Controls.Add(durationFlow);
+        content.Controls.Add(durationGroup);
+
         // Buttons.
         var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, AutoSize = true };
         var ok = Ui.Button(Strings.BtnSave, (_, _) => Save(), primary: true);
@@ -143,6 +154,9 @@ internal sealed class PlaylistConfigDialog : Form
 
         _embedThumb.Checked = options.EmbedThumbnail;
         _embedMeta.Checked = options.EmbedMetadata;
+
+        _overrideDuration.Checked = options.MaxDurationMinutesOverride.HasValue;
+        _maxDuration.Value = Math.Clamp(options.MaxDurationMinutesOverride ?? Settings.MaxVideoDurationMinutes.Value, 0, 100000);
     }
 
     void WireToggles()
@@ -152,6 +166,7 @@ internal sealed class PlaylistConfigDialog : Form
         _musicBest.CheckedChanged += (_, _) => UpdateEnabledState();
         _musicCustom.CheckedChanged += (_, _) => UpdateEnabledState();
         _musicWorst.CheckedChanged += (_, _) => UpdateEnabledState();
+        _overrideDuration.CheckedChanged += (_, _) => UpdateEnabledState();
     }
 
     void UpdateEnabledState()
@@ -160,6 +175,7 @@ internal sealed class PlaylistConfigDialog : Form
         _videoGroup.Visible = _kindVideo.Checked;
         _audioFormat.Enabled = _audioBitrate.Enabled = _musicCustom.Checked;
         _codec2.Enabled = _musicWorst.Checked;
+        _maxDuration.Enabled = _overrideDuration.Checked;
     }
 
     void PickTarget()
@@ -187,6 +203,7 @@ internal sealed class PlaylistConfigDialog : Form
         options.VideoMaxHeight = _videoHeight.SelectedIndex >= 0 ? VideoHeights[_videoHeight.SelectedIndex].Height : 1080;
         options.EmbedThumbnail = _embedThumb.Checked;
         options.EmbedMetadata = _embedMeta.Checked;
+        options.MaxDurationMinutesOverride = _overrideDuration.Checked ? (int)_maxDuration.Value : null;
 
         DialogResult = DialogResult.OK;
         Close();

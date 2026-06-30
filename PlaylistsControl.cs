@@ -76,6 +76,9 @@ internal sealed class PlaylistsControl : UserControl
         menu.Items.Add(Strings.CtxViewContents, null, (_, _) => ViewContents(_grid.CurrentRow));
         menu.Items.Add(Strings.CtxOpenInBrowser, null, (_, _) => OpenInBrowser(_grid.CurrentRow));
         menu.Items.Add(Strings.CtxCopyLink, null, (_, _) => CopyLink(_grid.CurrentRow));
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(Strings.CtxApplyAudioPreset, null, (_, _) => ApplyPreset(SelectedProfileRows(), MediaKind.Music));
+        menu.Items.Add(Strings.CtxApplyVideoPreset, null, (_, _) => ApplyPreset(SelectedProfileRows(), MediaKind.Video));
         _grid.ContextMenuStrip = menu;
     }
 
@@ -222,6 +225,26 @@ internal sealed class PlaylistsControl : UserControl
         if (row?.Tag is not SyncProfile profile) return;
         try { Clipboard.SetText("https://www.youtube.com/playlist?list=" + profile.PlaylistId); }
         catch (Exception ex) { Log("Copy link failed: " + ex.Message, LogLevel.Warning); }
+    }
+
+    /// <summary>Bulk-applies a media-kind preset to the given rows: standard options for that kind plus the
+    /// matching default folder from Settings (so hundreds of playlists are set in one click).</summary>
+    void ApplyPreset(IEnumerable<DataGridViewRow> rows, MediaKind kind)
+    {
+        string defaultFolder = kind == MediaKind.Video ? Settings.DefaultVideoFolder.Value : Settings.DefaultAudioFolder.Value;
+        var toPersist = new List<SyncProfile>();
+        foreach (var row in rows)
+        {
+            if (row.Tag is not SyncProfile profile) continue;
+            profile.Options = kind == MediaKind.Video
+                ? new DownloadOptions { Kind = MediaKind.Video, VideoMaxHeight = 1080 }
+                : new DownloadOptions { Kind = MediaKind.Music, MusicTier = MusicQualityTier.Best };
+            if (!string.IsNullOrWhiteSpace(defaultFolder)) profile.TargetFolder = defaultFolder;
+            FillProfileCells(row, profile);
+            if (profile.IsReadyToSync || SyncProfileStore.Get(profile.PlaylistId) is not null)
+                toPersist.Add(profile);
+        }
+        SyncProfileStore.UpsertMany(toPersist);
     }
 
     // A single user click on a checkbox; bulk/context updates set values with the handler suppressed.

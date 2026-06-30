@@ -39,6 +39,8 @@ internal sealed class SettingsControl : UserControl
             Persist(() => Settings.AutoUpdateYtDlp.Value = ((CheckBox)s!).Checked)));
         layout.Controls.Add(BuildConcurrencyRow());
         layout.Controls.Add(BuildMaxDurationRow());
+        layout.Controls.Add(BuildFolderRow(Strings.SettingsDefaultAudioFolderLabel, Settings.DefaultAudioFolder));
+        layout.Controls.Add(BuildFolderRow(Strings.SettingsDefaultVideoFolderLabel, Settings.DefaultVideoFolder));
 
         Controls.Add(layout);
     }
@@ -82,6 +84,25 @@ internal sealed class SettingsControl : UserControl
         var spinner = new NumericUpDown { Minimum = 0, Maximum = 100000, Value = Math.Clamp(Settings.MaxVideoDurationMinutes.Value, 0, 100000), Width = 90, Margin = new Padding(4) };
         spinner.ValueChanged += (_, _) => Persist(() => Settings.MaxVideoDurationMinutes.Value = (int)spinner.Value);
         row.Controls.Add(spinner);
+        return row;
+    }
+
+    Control BuildFolderRow(string label, Setting<string> setting)
+    {
+        var row = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true, WrapContents = false, Margin = new Padding(0) };
+        row.Controls.Add(Ui.Label(label));
+
+        var box = new TextBox { Text = setting.Value, Width = 340, Margin = new Padding(4) };
+        box.Leave += (_, _) => Persist(() => setting.Value = box.Text.Trim());
+        row.Controls.Add(box);
+        row.Controls.Add(Ui.Button(Strings.BtnBrowse, (_, _) =>
+        {
+            using var dialog = new FolderBrowserDialog();
+            if (Directory.Exists(box.Text)) dialog.SelectedPath = box.Text;
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+            box.Text = dialog.SelectedPath;
+            Persist(() => setting.Value = box.Text.Trim());
+        }));
         return row;
     }
 

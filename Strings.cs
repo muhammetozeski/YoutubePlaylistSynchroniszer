@@ -75,6 +75,8 @@ internal static class Strings
     public static string CtxViewContents = "İçeriği gör…";
     public static string CtxOpenInBrowser = "YouTube'da aç (tarayıcı)";
     public static string CtxCopyLink = "Linki kopyala";
+    public static string CtxApplyAudioPreset = "Ses ön ayarı uygula";
+    public static string CtxApplyVideoPreset = "Video ön ayarı uygula";
     public static string ConfirmSelectAllFormat = "{0} çalma listesinin tümü işaretlensin mi?";
     public static string ConfirmClearAll = "Tüm işaretler kaldırılsın mı?";
     public static string DontAskAgain = "Bir daha sorma";
@@ -125,6 +127,9 @@ internal static class Strings
     public static string SettingsAutoUpdateYtDlpLabel = "Senkronizasyondan önce yt-dlp'yi güncelle";
     public static string SettingsConcurrencyLabel = "Eşzamanlı indirme:";
     public static string SettingsMaxDurationLabel = "Maksimum video süresi (dk, 0=sınırsız):";
+    public static string SettingsDefaultAudioFolderLabel = "Varsayılan ses klasörü:";
+    public static string SettingsDefaultVideoFolderLabel = "Varsayılan video klasörü:";
+    public static string ConfigMaxDurationOverrideLabel = "Maksimum süreyi bu liste için ayarla (dk):";
     public static string SettingsDarkThemeLabel = "Karanlık tema";
     public static string SettingsBulkConfirmLabel = "Toplu seçim işlemlerinde onay sor";
 

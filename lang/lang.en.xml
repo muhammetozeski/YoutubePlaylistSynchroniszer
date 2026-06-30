@@ -66,6 +66,8 @@
   <s name="CtxViewContents">View contents…</s>
   <s name="CtxOpenInBrowser">Open on YouTube (browser)</s>
   <s name="CtxCopyLink">Copy link</s>
+  <s name="CtxApplyAudioPreset">Apply audio preset</s>
+  <s name="CtxApplyVideoPreset">Apply video preset</s>
   <s name="ConfirmSelectAllFormat">Check all {0} playlists?</s>
   <s name="ConfirmClearAll">Clear all checkmarks?</s>
   <s name="DontAskAgain">Don't ask again</s>
@@ -116,6 +118,9 @@
   <s name="SettingsAutoUpdateYtDlpLabel">Update yt-dlp before a sync</s>
   <s name="SettingsConcurrencyLabel">Concurrent downloads:</s>
   <s name="SettingsMaxDurationLabel">Max video duration (min, 0=unlimited):</s>
+  <s name="SettingsDefaultAudioFolderLabel">Default audio folder:</s>
+  <s name="SettingsDefaultVideoFolderLabel">Default video folder:</s>
+  <s name="ConfigMaxDurationOverrideLabel">Override max duration for this playlist (min):</s>
   <s name="SettingsDarkThemeLabel">Dark theme</s>
   <s name="SettingsBulkConfirmLabel">Confirm bulk selection actions</s>
 

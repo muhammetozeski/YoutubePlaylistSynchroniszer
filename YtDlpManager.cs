@@ -90,7 +90,7 @@ internal static partial class YtDlpManager
         var filters = new List<string>();
         if (Settings.SkipLiveStreams.Value)
             filters.Add("live_status != is_live & live_status != is_upcoming & live_status != post_live");
-        int maxMinutes = Settings.MaxVideoDurationMinutes.Value;
+        int maxMinutes = options.MaxDurationMinutesOverride ?? Settings.MaxVideoDurationMinutes.Value;
         if (maxMinutes > 0)
             filters.Add($"duration <=? {maxMinutes * 60}"); // <=? lets unknown-duration videos still download
         if (filters.Count > 0)

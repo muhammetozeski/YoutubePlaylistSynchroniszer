@@ -33,6 +33,10 @@ internal sealed class DownloadOptions
     public bool EmbedThumbnail { get; set; } = true;
     public bool EmbedMetadata { get; set; } = true;
 
+    /// <summary>Per-playlist max video duration in minutes; null inherits the global setting (cascade:
+    /// a specific value here overrides <see cref="Settings.MaxVideoDurationMinutes"/>).</summary>
+    public int? MaxDurationMinutesOverride { get; set; }
+
     /// <summary>Builds the yt-dlp format + embedding arguments for these options.</summary>
     public IReadOnlyList<string> BuildFormatArguments()
     {
